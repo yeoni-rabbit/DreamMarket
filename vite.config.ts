@@ -145,6 +145,16 @@ function vitePluginManusDebugCollector(): Plugin {
           }
         });
       });
+
+      // SPA fallback middleware - redirect all non-file requests to index.html
+      return () => {
+        server.middlewares.use((req, res, next) => {
+          if (req.method === "GET" && !req.url?.includes(".")) {
+            req.url = "/index.html";
+          }
+          next();
+        });
+      };
     },
   };
 }
@@ -168,7 +178,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    strictPort: false, // Will find next available port if 3000 is busy
+    strictPort: false,
     host: true,
     allowedHosts: [
       ".manuspre.computer",
